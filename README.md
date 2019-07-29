@@ -10,7 +10,8 @@ install(CORS) {
 }
 ```
 
-## Install 
+## Install [![](https://jitpack.io/v/lamba92/ktor-cors-any.svg)](https://jitpack.io/#lamba92/ktor-cors-any)
+
 ```kotlin
 repositories {
     maven(url="https://jitpack.io")
