@@ -1,48 +1,47 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.lamba92.gradle.utils.ktor
+import com.github.lamba92.gradle.utils.prepareForPublication
 
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
+buildscript {
+    repositories {
+        maven("https://dl.bintray.com/lamba92/com.github.lamba92/")
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath("com.github.lamba92", "lamba-gradle-utils", "1.0.6")
+    }
+}
 
 plugins {
-    kotlin("jvm") version "1.3.40"
+    kotlin("jvm")
+    id("com.jfrog.bintray")
     `maven-publish`
 }
 
-group = "it.lamba"
-version = "1.0.0"
+group = "com.github.lamba92"
+version = System.getenv("GITHUB_REF")?.split("/")?.last() ?: "2.0.0"
 
 repositories {
     jcenter()
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(ktor("server-core"))
-}
-
-kotlin.sourceSets["main"].kotlin.srcDirs("src")
-kotlin.sourceSets["test"].kotlin.srcDirs("test")
-
-sourceSets["main"].resources.srcDirs("resources")
-sourceSets["test"].resources.srcDirs("testresources")
-
-fun DependencyHandlerScope.ktor(name: String, version: String = ktor_version) = "io.ktor:ktor-$name:$version"
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-val sources by tasks.register<Jar>("sourcesJar") {
-    from(kotlin.sourceSets["main"].kotlin)
-    archiveClassifier.set("sources")
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("ktorCorsAnyPublication") {
-            from(components["java"])
-            artifact(sources)
+kotlin {
+    sourceSets {
+        named("main") {
+            kotlin.srcDirs("src")
+        }
+        named("test") {
+            kotlin.srcDirs("test")
         }
     }
+    target.compilations.all {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 }
+
+dependencies {
+    val ktorVersion: String by project
+    implementation(ktor("server-core", ktorVersion))
+}
+
+prepareForPublication()
