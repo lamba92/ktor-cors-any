@@ -1,6 +1,7 @@
 name: CI Publication
 on:
-  - release
+  release:
+    types: [published]
 
 jobs:
   publish:

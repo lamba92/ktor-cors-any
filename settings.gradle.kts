@@ -11,7 +11,7 @@ pluginManagement {
         val kotlinVersion: String by settings
         val bintrayPluginVersion: String by settings
 
-        kotlin("jvm") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion
         id("com.jfrog.bintray") version bintrayPluginVersion
 
     }

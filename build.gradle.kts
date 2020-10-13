@@ -13,7 +13,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     id("com.jfrog.bintray")
     `maven-publish`
 }
@@ -26,22 +26,23 @@ repositories {
 }
 
 kotlin {
-    sourceSets {
-        named("main") {
-            kotlin.srcDirs("src")
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
         }
-        named("test") {
+    }
+    sourceSets {
+        named("jvmMain") {
+            kotlin.srcDirs("src")
+            dependencies {
+                val ktorVersion: String by project
+                implementation(ktor("server-core", ktorVersion))
+            }
+        }
+        named("jvmTest") {
             kotlin.srcDirs("test")
         }
     }
-    target.compilations.all {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-}
-
-dependencies {
-    val ktorVersion: String by project
-    implementation(ktor("server-core", ktorVersion))
 }
 
 prepareForPublication()
